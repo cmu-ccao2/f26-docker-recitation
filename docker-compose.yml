@@ -1,1 +1,7 @@
-
+services:
+  web:
+    build: .
+    image: section-info
+    container_name: section-info
+    ports:
+      - "8080:8080"

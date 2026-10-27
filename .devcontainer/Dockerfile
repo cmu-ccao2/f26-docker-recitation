@@ -1,4 +1,18 @@
-FROM mcr.microsoft.com/devcontainers/python:3.13-bookworm
+# Parent image
+FROM python:3.9
 
-# Remove broken Yarn GPG key / repo so apt-get update succeeds
-RUN rm -f /etc/apt/sources.list.d/yarn.list /usr/share/keyrings/yarnkey.gpg
+# Working directory inside the image
+WORKDIR /code
+
+# Copy requirements first so Docker can cache the install layer
+COPY ./requirements.txt /code/requirements.txt
+RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
+
+# Copy the application code
+COPY ./app /code/app
+
+# The port the app listens on
+EXPOSE 8080
+
+# Start the server
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080"]
